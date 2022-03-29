@@ -1,5 +1,6 @@
 package com.asurspace.vehicledata_boundsofhamburg
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,7 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
+@SuppressLint("StaticFieldLeak")
 class MainVM @Inject constructor(
     private val localizationServiceRepository: LocalizationServiceRepository,
     @ApplicationContext private val applicationContext: Context,
@@ -44,24 +46,27 @@ class MainVM @Inject constructor(
         _uiState.value = MapUiState.Pending
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             try {
-                val response =
-                    localizationServiceRepository.fetchPoiByCoordinates(coordinate1, coordinate2)
+                val response = localizationServiceRepository.fetchPoiByCoordinates(coordinate1, coordinate2)
                 _uiState.value = MapUiState.Loaded(
                     MapUiModel(
                         city = city,
-                        poiList = response.poiList
+                        poiList = response.poiList.sortedBy { it.fleetType }.asReversed()
                     )
                 )
-            } catch (ex: Exception) {
+            } catch (ex: HttpException) {
                 when {
-                    (ex is HttpException && ex.code() == 429) -> {
+                    ex.code() == 429 -> {
                         onQueryTimeLimit()
+                        Log.d("MainVM", "ex.code 429: ${ex.message.toString()} {ex.code()}")
                     }
-                    else -> {
-                        onError()
-                        Log.d("MainVM", ex.message.toString())
-                    }
+                    else -> Log.d("MainVM", "else: ${ex.message.toString()} {ex.code()}")
+
                 }
+            } catch (ex: Exception) {
+                onError()
+                Log.d("MainVM", "Exception: ${ex.message.toString()} ${ex.localizedMessage}")
+            } finally {
+
             }
         }
     }
