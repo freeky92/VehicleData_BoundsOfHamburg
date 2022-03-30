@@ -1,7 +1,7 @@
 package com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities
 
 import android.os.Parcelable
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 

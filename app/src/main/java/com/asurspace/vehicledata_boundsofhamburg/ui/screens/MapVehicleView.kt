@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.mapcompanents.TaxiPoiMap
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.MapUIState
@@ -24,6 +25,7 @@ const val MAP_TAG = "MapVehicleView"
 
 @Composable
 fun MapVehicleView(
+    navController: NavController,
     viewModel: MapVehicleViewVM = viewModel()
 ) {
     when (val state = viewModel.uiState.collectAsState().value) {
@@ -59,7 +61,7 @@ fun MapVehicleView(
         }
 
         is MapUIState.Loaded -> {
-            TaxiPoiMap(viewModel, state.data)
+            TaxiPoiMap(navController, viewModel, state.data, modifier = Modifier.fillMaxSize())
             Log.d(MAP_TAG, "MapUiState on loaded.")
         }
     }

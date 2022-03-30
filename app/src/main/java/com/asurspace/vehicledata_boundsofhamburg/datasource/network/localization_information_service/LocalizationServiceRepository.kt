@@ -2,7 +2,7 @@ package com.asurspace.vehicledata_boundsofhamburg.datasource.network.localizatio
 
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.VehiclesData
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLng
 import javax.inject.Inject
 
 class LocalizationServiceRepository @Inject constructor(

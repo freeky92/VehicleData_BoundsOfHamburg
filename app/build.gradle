@@ -69,13 +69,17 @@ android {
 
 dependencies {
 
+    def accompanist_version = "0.24.5-alpha" // 0.24.5-alpha
     def lifecycleVersion = "2.4.1"
     def retrofitVersion = "2.9.0"
     def okhttp3Version = "5.0.0-alpha.6"
     def glideVersion = "4.13.1"
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation "com.google.android.gms:play-services-maps:18.0.2"
+    implementation "com.google.android.gms:play-services-location:19.0.1"
+    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
+    implementation "com.google.android.libraries.maps:maps:3.1.0-beta"
+    implementation "com.google.maps.android:maps-v3-ktx:3.3.0"
     // compose
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -83,11 +87,12 @@ dependencies {
     implementation "androidx.compose.foundation:foundation:$compose_version"
     implementation "androidx.compose.runtime:runtime:$compose_version"
     implementation "androidx.compose.compiler:compiler:$compose_version"
-    implementation "com.google.maps.android:maps-compose:2.0.0"
     implementation "androidx.navigation:navigation-compose:2.4.1"
     implementation "androidx.activity:activity-compose:1.4.0"
     // system UI controller 0.24.5-alpha
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.5-alpha"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     // lifecycle feathers
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
@@ -99,6 +104,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.android.volley:volley:1.2.1"
     //okhttp
     implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"

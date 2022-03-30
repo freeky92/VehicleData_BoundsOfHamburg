@@ -14,7 +14,7 @@ import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.VehicleListUIState
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
 import com.asurspace.vehicledata_boundsofhamburg.utils.share
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

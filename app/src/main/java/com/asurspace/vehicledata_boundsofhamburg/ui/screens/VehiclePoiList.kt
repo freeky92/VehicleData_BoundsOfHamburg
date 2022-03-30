@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.*
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 const val VPL_TAG = "VehiclePoiList"
 
 @Composable
-fun VehiclePoiList(modifier: Modifier = Modifier, viewModel: VehiclePoiListVM = viewModel()){
+fun VehiclePoiList(navController: NavController, viewModel: VehiclePoiListVM = viewModel()){
     when (val state = viewModel.uiState.collectAsState().value) {
 
         is VehicleListUIState.Empty -> {
