@@ -1,7 +1,6 @@
 package com.asurspace.vehicledata_boundsofhamburg.ui.screens
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,46 +26,45 @@ const val MAP_TAG = "MapVehicleView"
 fun MapVehicleView(
     viewModel: MapVehicleViewVM = viewModel()
 ) {
-    Column(modifier = Modifier.background(Color.White)) {
-        when (val state = viewModel.uiState.collectAsState().value) {
+    when (val state = viewModel.uiState.collectAsState().value) {
 
-            is MapUIState.Empty -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_data),
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                Log.d(MAP_TAG, "MapUiState on empty.")
+        is MapUIState.Empty -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.no_data),
+                    modifier = Modifier.padding(16.dp)
+                )
             }
+            Log.d(MAP_TAG, "MapUiState on empty.")
+        }
 
-            is MapUIState.Pending -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                }
-                Log.d(MAP_TAG, "MapUiState on pending.")
+        is MapUIState.Pending -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
             }
+            Log.d(MAP_TAG, "MapUiState on pending.")
+        }
 
-            is MapUIState.Error -> {
-                ErrorDialog(state.message)
-                Log.d(MAP_TAG, "MapUiState on error.")
-            }
+        is MapUIState.Error -> {
+            ErrorDialog(state.message)
+            Log.d(MAP_TAG, "MapUiState on error.")
+        }
 
-            is MapUIState.Loaded -> {
-                TaxiPoiMap(viewModel, state.data)
-                Log.d(MAP_TAG, "MapUiState on loaded.")
-            }
+        is MapUIState.Loaded -> {
+            TaxiPoiMap(viewModel, state.data)
+            Log.d(MAP_TAG, "MapUiState on loaded.")
         }
     }
 }
+
 
 
 

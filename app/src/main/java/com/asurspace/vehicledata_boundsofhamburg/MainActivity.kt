@@ -18,7 +18,6 @@ import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIMo
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHamburgTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
