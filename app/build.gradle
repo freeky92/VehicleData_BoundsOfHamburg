@@ -81,10 +81,13 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.foundation:foundation:$compose_version"
-    implementation "com.google.maps.android:maps-compose:1.0.0"
+    implementation "androidx.compose.runtime:runtime:$compose_version"
+    implementation "androidx.compose.compiler:compiler:$compose_version"
+    implementation "com.google.maps.android:maps-compose:2.0.0"
+    implementation "androidx.navigation:navigation-compose:2.4.1"
     implementation "androidx.activity:activity-compose:1.4.0"
-    // system UI controller
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    // system UI controller 0.24.5-alpha
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.5-alpha"
     // lifecycle feathers
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"

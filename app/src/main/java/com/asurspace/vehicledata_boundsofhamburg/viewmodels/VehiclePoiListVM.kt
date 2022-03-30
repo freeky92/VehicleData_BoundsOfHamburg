@@ -1,16 +1,14 @@
-package com.asurspace.vehicledata_boundsofhamburg
+package com.asurspace.vehicledata_boundsofhamburg.viewmodels
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.CoroutineDispatcherProvider
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.LocalizationServiceRepository
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LAT
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LON
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LAT
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LON
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.VehicleListUIState
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
 import com.asurspace.vehicledata_boundsofhamburg.utils.share
@@ -24,9 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
-class MainVM @Inject constructor(
+class VehiclePoiListVM @Inject constructor(
     private val localizationServiceRepository: LocalizationServiceRepository,
-    @ApplicationContext val applicationContext: Context,
+     @ApplicationContext val applicationContext: Context,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) : ViewModel() {
 
@@ -40,8 +38,8 @@ class MainVM @Inject constructor(
     }
 
     fun fetchPoiByCoordinates(
-        coordinate1: LatLng = LatLng(P1LAT, P1LON),
-        coordinate2: LatLng = LatLng(P2LAT, P2LON)
+        coordinate1: LatLng = LatLng(LocalizationDataService.P1LAT, LocalizationDataService.P1LON),
+        coordinate2: LatLng = LatLng(LocalizationDataService.P2LAT, LocalizationDataService.P2LON)
     ) {
         _uiState.value = VehicleListUIState.Pending
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {

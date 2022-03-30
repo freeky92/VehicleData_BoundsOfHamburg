@@ -20,10 +20,10 @@ interface LocalizationDataService {
         const val BASE_URL = "https://fake-poi-api.mytaxi.com/"
 
         // P1
-        const val P1LAT = 53.6607547
-        const val P1LON = 9.974227347022147
+        const val P1LAT = 53.66
+        const val P1LON = 9.97
         // P2
-        const val P2LAT = 53.5406425
-        const val P2LON = 10.2070653
+        const val P2LAT = 53.54
+        const val P2LON = 10.20
     }
 }
