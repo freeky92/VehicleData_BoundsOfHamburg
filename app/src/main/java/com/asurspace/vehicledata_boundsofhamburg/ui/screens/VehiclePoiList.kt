@@ -22,11 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.asurspace.vehicledata_boundsofhamburg.*
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.VehicleListUIState
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
+import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.White1
 import com.asurspace.vehicledata_boundsofhamburg.utils.ErrorDialog
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.VehiclePoiListVM
@@ -35,7 +37,7 @@ import kotlinx.coroutines.launch
 const val VPL_TAG = "VehiclePoiList"
 
 @Composable
-fun VehiclePoiList(navController: NavController, viewModel: VehiclePoiListVM = viewModel()){
+fun VehiclePoiList(navController: NavController, viewModel: VehiclePoiListVM = viewModel()) {
     when (val state = viewModel.uiState.collectAsState().value) {
 
         is VehicleListUIState.Empty -> {
@@ -69,42 +71,45 @@ fun VehiclePoiList(navController: NavController, viewModel: VehiclePoiListVM = v
         }
 
         is VehicleListUIState.Loaded -> {
-            PoiListLoadedScreen(viewModel, state.data)
+            PoiListLoadedScreen(navController, viewModel, state.data)
             Log.d(VPL_TAG, "MapUiState on loaded.")
         }
     }
 }
 
 @Composable
-fun PoiListLoadedScreen(viewModel: VehiclePoiListVM = viewModel(), data:  VehicleListUIModel) {
-    Text(
-        text = data.city,
-        modifier = Modifier
-            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-        style = MaterialTheme.typography.h1
-    )
-    PoiList(poiList = data.poiList)
-}
-
-@Composable
-fun PoiList(poiList: List<Poi>) {
+fun PoiListLoadedScreen(
+    navController: NavController,
+    viewModel: VehiclePoiListVM = viewModel(),
+    data: VehicleListUIModel
+) {
     val taxiListState = rememberLazyListState()
+    val showButton by remember { derivedStateOf { taxiListState.firstVisibleItemIndex > 0 } }
     val scope = rememberCoroutineScope()
+    val poiList = data.poiList
 
-    Box() {
-        LazyColumn(
-            state = taxiListState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
-        ) {
-            items(items = poiList) { poi ->
-                PoiItem(poi)
+    Box{
+        Column {
+
+            Text(
+                text = data.city,
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                style = MaterialTheme.typography.h1
+            )
+            LazyColumn(
+                state = taxiListState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp),
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
+                items(items = poiList) { poi ->
+                    PoiItem(navController, poi)
+                }
+
             }
-
         }
-        val showButton by remember { derivedStateOf { taxiListState.firstVisibleItemIndex > 0 } }
 
         AnimatedVisibility(
             modifier = Modifier
@@ -130,19 +135,24 @@ fun PoiList(poiList: List<Poi>) {
                 )
             }
         }
+
     }
 
 }
 
 @Composable
-fun PoiItem(poi: Poi) {
+fun PoiItem(navController: NavController, poi: Poi) {
     Column(modifier = Modifier
+        .fillMaxWidth()
         .padding(start = 16.dp, top = 16.dp)
-        .clickable { }) {
+        .clickable {
+            navController.currentBackStackEntry?.savedStateHandle?.set(POI, poi)
+            navController.navigate(Screen.VehicleDetail.route)
+        }) {
         if (poi.fleetType == "TAXI") {
             Surface(
                 color = Color.Yellow,
-                shape = RoundedCornerShape(12.dp),
+                shape = CircleShape,
                 elevation = 1.dp,
                 modifier = Modifier
             ) {
@@ -155,8 +165,10 @@ fun PoiItem(poi: Poi) {
             }
         } else if (poi.fleetType == "POOLING") {
             Surface(
-                shape = MaterialTheme.shapes.medium,
+                shape = CircleShape,
                 elevation = 1.dp,
+                color = DkBlue,
+                contentColor = Color.White,
                 modifier = Modifier
             ) {
                 Text(

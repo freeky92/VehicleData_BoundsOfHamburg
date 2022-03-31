@@ -10,9 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Coordinate
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
-import com.asurspace.vehicledata_boundsofhamburg.ui.VehicleDataBoundsOfHamburgApp
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.VehicleDataBoundsOfHamburgNavController
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.PoiListLoadedScreen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHamburgTheme
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VehicleData_BoundsOfHamburgTheme {
-                VehicleDataBoundsOfHamburgApp()
+                VehicleDataBoundsOfHamburgNavController()
             }
         }
     }
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val navController = rememberNavController()
     VehicleData_BoundsOfHamburgTheme {
         Column(
             modifier = Modifier
@@ -45,6 +47,7 @@ fun DefaultPreview() {
                 .background(Color.White)
         ) {
             PoiListLoadedScreen(
+                navController,
                 data = VehicleListUIModel(
                     city = "Hamburg, Germany",
                     poiList = listOf(

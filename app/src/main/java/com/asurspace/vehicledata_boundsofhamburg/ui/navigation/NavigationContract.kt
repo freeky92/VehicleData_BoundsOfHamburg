@@ -1,4 +1,4 @@
-package com.asurspace.vehicledata_boundsofhamburg.ui
+package com.asurspace.vehicledata_boundsofhamburg.ui.navigation
 
 sealed class Screen(val route: String) {
     object MapVehicleView : Screen("MapVehicleView")

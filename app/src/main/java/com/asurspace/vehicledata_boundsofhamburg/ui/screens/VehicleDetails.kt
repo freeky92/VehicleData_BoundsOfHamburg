@@ -15,14 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
-import com.asurspace.vehicledata_boundsofhamburg.ui.POI
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 
 const val VD_TAG = "VehicleDetails"
 
 @Composable
 fun VehicleDetails(
     navController: NavController,
-    poi: Poi? = navController.previousBackStackEntry?.arguments?.getParcelable(POI)
+    poi: Poi?
 ) {
     Box {
         Column(modifier = Modifier

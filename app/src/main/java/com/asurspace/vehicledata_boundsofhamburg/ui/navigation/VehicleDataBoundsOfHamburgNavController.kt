@@ -1,6 +1,5 @@
-package com.asurspace.vehicledata_boundsofhamburg.ui
+package com.asurspace.vehicledata_boundsofhamburg.ui.navigation
 
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -14,11 +13,12 @@ import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehicleDetails
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehiclePoiList
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHamburgTheme
 
+//entities
 const val POI_LIST = "poiList"
 const val POI = "poi"
 
 @Composable
-fun VehicleDataBoundsOfHamburgApp() {
+fun VehicleDataBoundsOfHamburgNavController() {
     val navController = rememberNavController()
 
     VehicleData_BoundsOfHamburgTheme {
@@ -33,7 +33,8 @@ fun VehicleDataBoundsOfHamburgApp() {
                 VehiclePoiList(navController, hiltViewModel())
             }
             composable(route = Screen.VehicleDetail.route) {
-                VehicleDetails(navController)
+                val poi = navController.previousBackStackEntry?.savedStateHandle?.get<Poi>(POI)
+                VehicleDetails(navController, poi)
             }
         }
     }

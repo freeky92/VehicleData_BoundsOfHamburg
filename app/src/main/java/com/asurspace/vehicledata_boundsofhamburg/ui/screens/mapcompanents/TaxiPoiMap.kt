@@ -26,8 +26,8 @@ import androidx.lifecycle.Lifecycle.Event.*
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
-import com.asurspace.vehicledata_boundsofhamburg.ui.POI
-import com.asurspace.vehicledata_boundsofhamburg.ui.Screen
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
