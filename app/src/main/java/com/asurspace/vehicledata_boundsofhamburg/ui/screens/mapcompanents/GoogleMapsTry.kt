@@ -12,25 +12,29 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
-import com.asurspace.vehicledata_boundsofhamburg.ui.screens.PoiItem
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.Dispatchers
@@ -86,12 +90,12 @@ fun GMapTry(
     }
     var shouldAnimateZoom by remember { mutableStateOf(true) }
     var ticker by remember { mutableStateOf(0) }
+    var onPointClickInfo by remember { mutableStateOf("") }
     var mapProperties by remember {
         mutableStateOf(MapProperties(mapType = MapType.NORMAL, isTrafficEnabled = true))
     }
 
     val taxiListState = rememberLazyListState()
-
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
@@ -104,6 +108,7 @@ fun GMapTry(
             },
             onPOIClick = {
                 Log.d(TPM_TAG, "POI clicked: ${it.name}")
+                onPointClickInfo = it.name
             }
         ) {
             val markerClick: (Marker) -> Boolean = {
@@ -169,13 +174,13 @@ fun GMapTry(
         LazyRow(
             Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth().padding(bottom = 16.dp)
-        ){
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
             items(items = data.poiList) { poi ->
-                PoiItem(navController, poi)
+                MapPoiItem(navController, poi, cameraPositionState)
             }
         }
-
         if (!isMapLoaded) {
             AnimatedVisibility(
                 modifier = Modifier
@@ -187,6 +192,78 @@ fun GMapTry(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .wrapContentSize()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun OnPointInfoWindow(pointName: String, modifier: Modifier = Modifier) {
+    Column(modifier = Modifier.size(300.dp, 300.dp)) {
+        Text(text = pointName)
+    }
+}
+
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun MapPoiItem(navController: NavController, poi: Poi, cameraPositionState: CameraPositionState) {
+    val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = Color.White,
+        modifier = Modifier.padding(5.dp),
+        onClick = {
+            lifecycleScope.launch {
+                cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(poi.coordinate.toLatLng(), 14f)))
+            }
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            if (poi.fleetType == "TAXI") {
+                Surface(
+                    color = Color.Yellow,
+                    shape = CircleShape,
+                    elevation = 1.dp,
+                ) {
+                    Text(
+                        text = poi.fleetType,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            } else if (poi.fleetType == "POOLING") {
+                Surface(
+                    shape = CircleShape,
+                    elevation = 1.dp,
+                    color = DkBlue,
+                    contentColor = Color.White,
+                    modifier = Modifier
+                ) {
+                    Text(
+                        text = poi.fleetType,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            }
+            Row(modifier = Modifier.padding(top = 8.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_marker12),
+                    contentDescription = null,
+                    modifier = Modifier.size(width = 18.dp, height = 18.dp)
+                )
+                Text(
+                    text = "id: ${poi.id}",
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier.padding(start = 4.dp)
                 )
             }
         }
