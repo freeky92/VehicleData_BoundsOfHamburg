@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,7 +94,7 @@ fun GMapTry(
     val scope = rememberCoroutineScope()
 
     val cameraPositionState = rememberCameraPositionState {
-        this.position = defaultCameraPosition1
+        position = defaultCameraPosition1
     }
 
     var uiSettings by remember {
@@ -116,8 +117,11 @@ fun GMapTry(
             )
         )
     }
+    val listOfVehicles = remember {
+        mutableStateOf(data.poiList)
+    }
 
-
+    val onMapMarkerState = rememberMarkerState()
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
@@ -134,18 +138,21 @@ fun GMapTry(
             },
             onMapClick = {
                 onPointClickInfo = emptyPointOfInterest
+                onMapMarkerState.position = LatLng(0.0, 0.0)
+            }, onMapLongClick = {
+
             }
         ) {
 
             val markerClick: (Marker) -> Boolean = {
                 Log.d(TPM_TAG, "${it.title} was clicked")
                 cameraPositionState.projection?.let { projection ->
-                    Log.d(TPM_TAG, "The current projection is: $projection")
+                    Log.d(TPM_TAG, "The current projection is: ${projection.visibleRegion}")
                 }
                 false
             }
 
-            data.poiList.forEach { poi ->
+            listOfVehicles.value.forEach { poi ->
                 MarkerInfoWindow(
                     state = MarkerState(LatLng(poi.coordinate.latitude, poi.coordinate.longitude)),
                     title = poi.fleetType,
@@ -194,7 +201,28 @@ fun GMapTry(
                         }
                     }
                 }
+            }
 
+            if (!cameraPositionState.isMoving) {
+                MarkerInfoWindow(
+                    MarkerState(position = cameraPositionState.position.target),
+                    draggable = true
+                ) {
+                    Column {
+                        Text(
+                            text = it.position.latitude.toString(),
+                            style = MaterialTheme.typography.body1,
+                            modifier = Modifier
+                                .padding(8.dp)
+                        )
+                        Text(
+                            text = it.position.longitude.toString(),
+                            style = MaterialTheme.typography.body1,
+                            modifier = Modifier
+                                .padding(8.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -218,16 +246,36 @@ fun GMapTry(
                 )
             ) + fadeIn(),
         ) {
-            LazyRow(
-                state = taxiListState,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(start = 8.dp, end = 3.dp)
-            ) {
-                items(items = data.poiList) { poi ->
-                    MapPoiItem(poi, cameraPositionState)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Button(
+                    colors = buttonColors(backgroundColor = Color.White),
+                    onClick = {
+                        val projection = cameraPositionState.projection?.visibleRegion
+                        if (projection != null) {
+                            lifecycleScope.launch {
+                                listOfVehicles.value = viewModel.fetchPoiByCoordinates(
+                                    projection.farLeft,
+                                    projection.nearRight
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.wrapContentSize()
+                ) {
+                    Text(text = "Search in the area", style = MaterialTheme.typography.body1)
+                }
+                LazyRow(
+                    state = taxiListState,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(start = 8.dp, end = 3.dp)
+                ) {
+                    items(items = listOfVehicles.value) { poi ->
+                        MapPoiItem(poi, cameraPositionState)
+                    }
                 }
             }
+
         }
 
         AnimatedVisibility(
