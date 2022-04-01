@@ -15,15 +15,5 @@ data class Poi(
     @SerializedName("id") val id: Int,
     @SerializedName("heading") val heading: Double,
     @SerializedName("fleetType") val fleetType: String,
-    @SerializedName("coordinate") val coordinate: Coordinate,
+    @SerializedName("coordinate") val coordinate: LatLng,
 ) : Parcelable
-
-@Parcelize
-data class Coordinate(
-    @SerializedName("latitude") val latitude: Double,
-    @SerializedName("longitude") val longitude: Double
-) : Parcelable {
-    fun toLatLng() = LatLng(latitude, longitude)
-}
-
-fun LatLng.toCoordinate() = Coordinate(latitude = this.latitude, longitude = this.longitude)

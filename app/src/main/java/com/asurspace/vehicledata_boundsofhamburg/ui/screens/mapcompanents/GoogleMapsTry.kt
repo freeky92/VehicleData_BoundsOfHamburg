@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,8 +17,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -27,12 +27,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LAT
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LON
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LAT
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LON
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
+import com.asurspace.vehicledata_boundsofhamburg.ui.theme.White1
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
@@ -42,7 +46,16 @@ import kotlinx.coroutines.launch
 
 const val GMT_TAG = "GMapTry"
 
-private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
+private fun bitmapDescriptorFromVector(
+    context: Context,
+    vehicleType: String,
+    id: Int
+): BitmapDescriptor {
+    val vectorResId = when {
+        vehicleType == "TAXI" -> R.drawable.ic_yellow_car
+        (vehicleType == "POOLING" && id % 1000 in (0..250)) -> R.drawable.ic_black_car
+        else -> R.drawable.ic_white_car
+    }
     val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
     vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
     val bitmap = Bitmap.createBitmap(
@@ -55,8 +68,8 @@ private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): Bitm
     return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
 
-var hamburg10 = LatLng(LocalizationDataService.P1LAT, LocalizationDataService.P1LON)
-var hamburg20 = LatLng(LocalizationDataService.P2LAT, LocalizationDataService.P2LON)
+var hamburg10 = LatLng(P1LAT, P1LON)
+var hamburg20 = LatLng(P2LAT, P2LON)
 val center1 = LatLng(
     ((hamburg10.latitude + hamburg20.latitude) / 2),
     ((hamburg10.longitude + hamburg20.longitude) / 2)
@@ -72,9 +85,13 @@ fun GMapTry(
     viewModel: MapVehicleViewVM,
     data: MapUIModel,
 ) {
-
+    val localContext = LocalContext.current
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
     var isMapLoaded by remember { mutableStateOf(false) }
+
+    val taxiListState = rememberLazyListState()
+    var listIsVisible by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
 
     val cameraPositionState = rememberCameraPositionState {
         this.position = defaultCameraPosition1
@@ -92,10 +109,15 @@ fun GMapTry(
     var ticker by remember { mutableStateOf(0) }
     var onPointClickInfo by remember { mutableStateOf("") }
     var mapProperties by remember {
-        mutableStateOf(MapProperties(mapType = MapType.NORMAL, isTrafficEnabled = true))
+        mutableStateOf(
+            MapProperties(
+                mapType = MapType.NORMAL,
+                isTrafficEnabled = true
+            )
+        )
     }
 
-    val taxiListState = rememberLazyListState()
+
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
@@ -108,9 +130,15 @@ fun GMapTry(
             },
             onPOIClick = {
                 Log.d(TPM_TAG, "POI clicked: ${it.name}")
-                onPointClickInfo = it.name
+
+            },
+            onMapClick = {
+                scope.launch {
+
+                }
             }
         ) {
+
             val markerClick: (Marker) -> Boolean = {
                 Log.d(TPM_TAG, "${it.title} was clicked")
                 cameraPositionState.projection?.let { projection ->
@@ -125,7 +153,7 @@ fun GMapTry(
                     title = poi.fleetType,
                     icon = bitmapDescriptorFromVector(
                         LocalContext.current,
-                        R.drawable.car_top_small
+                        poi.fleetType, poi.id
                     ),
                     onClick = markerClick,
                     onInfoWindowClick = {
@@ -171,16 +199,39 @@ fun GMapTry(
 
             }
         }
-        LazyRow(
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
+
+        AnimatedVisibility(
+            visible = !cameraPositionState.isMoving,
+            modifier = Modifier
+                .padding(bottom = 3.dp)
+                .align(Alignment.BottomCenter),
+            exit = slideOutVertically(
+                targetOffsetY = { fullSize ->
+                    fullSize / 2
+                }, animationSpec = tween(durationMillis = 350)
+            ) + fadeOut(),
+            enter = slideInVertically(
+                initialOffsetY = { fullSize ->
+                    fullSize
+                },
+                animationSpec = tween(
+                    delayMillis = 500,
+                    durationMillis = 350
+                )
+            ) + fadeIn(),
         ) {
-            items(items = data.poiList) { poi ->
-                MapPoiItem(navController, poi, cameraPositionState)
+            LazyRow(
+                state = taxiListState,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(start = 8.dp, end = 3.dp)
+            ) {
+                items(items = data.poiList) { poi ->
+                    MapPoiItem(poi, cameraPositionState)
+                }
             }
         }
+
         if (!isMapLoaded) {
             AnimatedVisibility(
                 modifier = Modifier
@@ -208,15 +259,22 @@ fun OnPointInfoWindow(pointName: String, modifier: Modifier = Modifier) {
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapPoiItem(navController: NavController, poi: Poi, cameraPositionState: CameraPositionState) {
+fun MapPoiItem(poi: Poi, cameraPositionState: CameraPositionState) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = Color.White,
-        modifier = Modifier.padding(5.dp),
+        modifier = Modifier.padding(end = 5.dp),
         onClick = {
-            lifecycleScope.launch {
-                cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(poi.coordinate.toLatLng(), 14f)))
+            lifecycleScope.launch(Dispatchers.Main) {
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newCameraPosition(
+                        CameraPosition.fromLatLngZoom(
+                            poi.coordinate,
+                            15f
+                        )
+                    )
+                )
             }
         }
     ) {

@@ -1,11 +1,11 @@
 package com.asurspace.vehicledata_boundsofhamburg.ui.state.models
 
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Coordinate
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
+import com.google.android.gms.maps.model.LatLng
 
 
 data class VehicleListUIModel(
     var city: String = "",
-    var requestCoordinates: List<Coordinate> = mutableListOf(),
+    var requestCoordinates: List<LatLng> = mutableListOf(),
     var poiList: List<Poi> = listOf()
 )

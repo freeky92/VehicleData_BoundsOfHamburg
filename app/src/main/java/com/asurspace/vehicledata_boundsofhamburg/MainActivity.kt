@@ -11,12 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Coordinate
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.VehicleDataBoundsOfHamburgNavController
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.PoiListLoadedScreen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHamburgTheme
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,11 +51,11 @@ fun DefaultPreview() {
                 data = VehicleListUIModel(
                     city = "Hamburg, Germany",
                     poiList = listOf(
-                        Poi(1, 1235.4, "First", Coordinate(54.2, 20.1)),
-                        Poi(2, 1235.4, "Second", Coordinate(24.2, 25.1)),
-                        Poi(3, 1235.4, "Third", Coordinate(11.2, 10.1)),
-                        Poi(4, 1235.4, "Forth", Coordinate(14.2, 45.1)),
-                        Poi(5, 1235.4, "Fifth", Coordinate(33.2, 34.1)),
+                        Poi(1, 1235.4, "First", LatLng(54.2, 20.1)),
+                        Poi(2, 1235.4, "Second", LatLng(24.2, 25.1)),
+                        Poi(3, 1235.4, "Third", LatLng(11.2, 10.1)),
+                        Poi(4, 1235.4, "Forth", LatLng(14.2, 45.1)),
+                        Poi(5, 1235.4, "Fifth", LatLng(33.2, 34.1)),
                     )
                 )
             )
