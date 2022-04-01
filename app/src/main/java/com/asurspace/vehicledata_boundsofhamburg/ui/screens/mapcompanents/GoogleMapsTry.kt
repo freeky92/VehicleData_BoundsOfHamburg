@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import androidx.compose.animation.*
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -36,7 +34,6 @@ import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
-import com.asurspace.vehicledata_boundsofhamburg.ui.theme.White1
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.*
@@ -212,10 +209,10 @@ fun GMapTry(
             ) + fadeOut(),
             enter = slideInVertically(
                 initialOffsetY = { fullSize ->
-                    fullSize
+                    fullSize*2
                 },
                 animationSpec = tween(
-                    delayMillis = 500,
+                    delayMillis = 650,
                     durationMillis = 350
                 )
             ) + fadeIn(),
