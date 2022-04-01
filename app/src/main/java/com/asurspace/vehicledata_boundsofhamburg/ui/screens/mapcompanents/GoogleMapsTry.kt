@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -75,7 +77,7 @@ val center1 = LatLng(
 val defaultCameraPosition1 = CameraPosition.fromLatLngZoom(center1, 11f)
 
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, androidx.compose.animation.ExperimentalAnimationApi::class)
 @Composable
 fun GMapTry(
     navController: NavController,
@@ -102,9 +104,10 @@ fun GMapTry(
             )
         )
     }
+    val emptyPointOfInterest = PointOfInterest(LatLng(0.0, 0.0), "", "")
     var shouldAnimateZoom by remember { mutableStateOf(true) }
     var ticker by remember { mutableStateOf(0) }
-    var onPointClickInfo by remember { mutableStateOf("") }
+    var onPointClickInfo by remember { mutableStateOf(emptyPointOfInterest) }
     var mapProperties by remember {
         mutableStateOf(
             MapProperties(
@@ -127,12 +130,10 @@ fun GMapTry(
             },
             onPOIClick = {
                 Log.d(TPM_TAG, "POI clicked: ${it.name}")
-
+                onPointClickInfo = it
             },
             onMapClick = {
-                scope.launch {
-
-                }
+                onPointClickInfo = emptyPointOfInterest
             }
         ) {
 
@@ -209,7 +210,7 @@ fun GMapTry(
             ) + fadeOut(),
             enter = slideInVertically(
                 initialOffsetY = { fullSize ->
-                    fullSize*2
+                    fullSize * 2
                 },
                 animationSpec = tween(
                     delayMillis = 650,
@@ -229,6 +230,35 @@ fun GMapTry(
             }
         }
 
+        AnimatedVisibility(
+            modifier = Modifier.align(Alignment.Center),
+            visible = onPointClickInfo.placeId != "",
+            enter = scaleIn(
+                transformOrigin = TransformOrigin.Center,
+                animationSpec = tween(durationMillis = 350)
+            ),
+            exit = scaleOut(
+                transformOrigin = TransformOrigin.Center,
+                animationSpec = tween(durationMillis = 350)
+            ) + fadeOut(),
+        ) {
+            Surface(
+                color = Color.White,
+                shape = RoundedCornerShape(10.dp),
+                elevation = 1.dp,
+                onClick = {
+                    onPointClickInfo = emptyPointOfInterest
+                }) {
+                Text(
+                    text = onPointClickInfo.name,
+                    Modifier
+                        .padding(12.dp)
+                        .align(Alignment.Center)
+                        .background(Color.White)
+                )
+            }
+        }
+
         if (!isMapLoaded) {
             AnimatedVisibility(
                 modifier = Modifier
@@ -243,13 +273,6 @@ fun GMapTry(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun OnPointInfoWindow(pointName: String, modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.size(300.dp, 300.dp)) {
-        Text(text = pointName)
     }
 }
 
