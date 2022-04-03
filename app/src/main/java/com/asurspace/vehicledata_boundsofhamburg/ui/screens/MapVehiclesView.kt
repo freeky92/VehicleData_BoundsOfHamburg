@@ -30,12 +30,12 @@ const val MAP_TAG = "MapVehiclesScreen"
 
 var hamburg10 = LatLng(LocalizationDataService.P1LAT, LocalizationDataService.P1LON)
 var hamburg20 = LatLng(LocalizationDataService.P2LAT, LocalizationDataService.P2LON)
-val center1 = LatLng(
+val center = LatLng(
     ((hamburg10.latitude + hamburg20.latitude) / 2),
     ((hamburg10.longitude + hamburg20.longitude) / 2)
 )
 
-val defaultCameraPosition1 = CameraPosition.fromLatLngZoom(center1, 11f)
+val defaultCameraPosition1 = CameraPosition.fromLatLngZoom(center, 11f)
 
 @Composable
 fun MapVehiclesScreen(

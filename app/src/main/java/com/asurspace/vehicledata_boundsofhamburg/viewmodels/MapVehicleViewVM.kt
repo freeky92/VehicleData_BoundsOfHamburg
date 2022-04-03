@@ -12,6 +12,7 @@ import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LAT
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LON
 import com.asurspace.vehicledata_boundsofhamburg.domain.map.CoordinateConverter
+import com.asurspace.vehicledata_boundsofhamburg.ui.screens.center
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.MapUIState
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.utils.share
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.math.sqrt
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -37,14 +39,16 @@ class MapVehicleViewVM @Inject constructor(
     val uiState = _uiState.share()
 
     private var camPosition = listOf(LatLng(P1LAT, P1LON), LatLng(P2LAT, P2LON))
+    private var camCenter = center
 
     init {
         fetchByCoordinate()
     }
 
-    fun setCameraPosition(positionList: List<LatLng>) {
+    fun setCameraPosition(positionList: List<LatLng>, camCenter: LatLng) {
         if (positionList != camPosition) {
             camPosition = positionList
+            this.camCenter = camCenter
         }
     }
 
@@ -59,9 +63,12 @@ class MapVehicleViewVM @Inject constructor(
                 _uiState.value = MapUIState.Loaded(
                     MapUIModel(
                         city = city,
-                        taxiList = taxiInfoList.sortedBy { it.poi.fleetType }.asReversed()
+                        taxiList = taxiInfoList.sortedBy { it.poi.coordinate.distance(camCenter) }
                     )
                 )
+
+                Log.d(TAG, camCenter.toString())
+                Log.d(TAG, taxiInfoList.sortedBy { it.poi.coordinate.distance(camCenter) }.toString())
             } catch (ex: HttpException) {
                 when {
                     ex.code() == 429 -> {
@@ -74,7 +81,7 @@ class MapVehicleViewVM @Inject constructor(
             } catch (ex: IndexOutOfBoundsException) {
                 Log.d(TAG, "IOOBException: ${ex.message.toString()} ${ex.localizedMessage}")
                 thereAreNoVehiclesQuery()
-            }catch (ex: IOException) {
+            } catch (ex: IOException) {
                 Log.d(TAG, "IOException: ${ex.message.toString()} ${ex.localizedMessage}")
             } catch (ex: Exception) {
                 Log.d(TAG, "Exception: ${ex.message.toString()} ${ex.localizedMessage}")
@@ -83,6 +90,13 @@ class MapVehicleViewVM @Inject constructor(
 
             }
         }
+    }
+
+    private fun LatLng.distance(point: LatLng): Double {
+        val distanceX = this.latitude - point.latitude
+        val distanceY = this.longitude - point.longitude
+
+        return sqrt(distanceX * distanceX + distanceY * distanceY)
     }
 
     private fun thereAreNoVehiclesQuery() {

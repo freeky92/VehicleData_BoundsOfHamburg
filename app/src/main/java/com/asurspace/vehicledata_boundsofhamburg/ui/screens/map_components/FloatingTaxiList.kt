@@ -61,7 +61,8 @@ fun FloatingTaxiList(
                                 listOf(
                                     projection.farLeft,
                                     projection.nearRight
-                                )
+                                ),
+                                projection.latLngBounds.center
                             )
                             viewModel.fetchByCoordinate()
                         }
