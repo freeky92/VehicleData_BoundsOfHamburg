@@ -26,8 +26,8 @@ import androidx.lifecycle.Lifecycle.Event.*
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService
-import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.TAXI_INFO
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
@@ -74,17 +74,19 @@ fun TaxiPoiMap(
     val onMapReady: OnMapReady = { map ->
 
 
-
     }
 
 
     Box(Modifier.fillMaxSize()) {
 
-        data.poiList.forEach { poi ->
+        data.poiList.forEach { taxiInfo ->
+
+            val poi = taxiInfo.poi
+            val address = taxiInfo.address
 
             Log.d(TPM_TAG, poi.id.toString())
             navController.currentBackStackEntry?.arguments?.putParcelable(
-                POI,
+                TAXI_INFO,
                 poi
             )
             navController.navigate(Screen.VehicleDetail.route)

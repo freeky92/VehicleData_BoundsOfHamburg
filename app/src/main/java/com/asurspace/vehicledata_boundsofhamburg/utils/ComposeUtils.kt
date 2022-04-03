@@ -13,15 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asurspace.vehicledata_boundsofhamburg.MainVM
+import androidx.lifecycle.viewModelScope
 import com.asurspace.vehicledata_boundsofhamburg.R
-
+import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun ErrorDialog(message: String) {
-    val viewModel: MainVM = viewModel()
+fun ErrorDialog(message: String, viewModel: MapVehicleViewVM) {
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(
@@ -46,7 +45,9 @@ fun ErrorDialog(message: String) {
             },
             confirmButton = {
                 Button(modifier = Modifier.padding(8.dp), onClick = {
-                    viewModel.fetchPoiByCoordinates()
+                    viewModel.viewModelScope.launch {
+                        viewModel.fetchPoiByCoordinates()
+                    }
                     openDialog.value = false
                 }, content = {
                     Text(text = "Try again.")

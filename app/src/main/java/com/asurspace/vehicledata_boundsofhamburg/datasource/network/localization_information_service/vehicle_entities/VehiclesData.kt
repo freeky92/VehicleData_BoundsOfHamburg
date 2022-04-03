@@ -1,5 +1,6 @@
 package com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities
 
+import android.location.Address
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
@@ -17,3 +18,6 @@ data class Poi(
     @SerializedName("fleetType") val fleetType: String,
     @SerializedName("coordinate") val coordinate: LatLng,
 ) : Parcelable
+
+@Parcelize
+data class TaxiInfo(val poi: Poi, val address: Address): Parcelable

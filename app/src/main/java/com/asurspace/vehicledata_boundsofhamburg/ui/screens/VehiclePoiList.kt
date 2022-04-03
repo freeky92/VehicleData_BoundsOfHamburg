@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,13 +23,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
-import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.TAXI_INFO
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.VehicleListUIState
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.VehicleListUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.White1
-import com.asurspace.vehicledata_boundsofhamburg.utils.ErrorDialog
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.VehiclePoiListVM
 import kotlinx.coroutines.launch
 
@@ -66,7 +64,7 @@ fun VehiclePoiList(navController: NavController, viewModel: VehiclePoiListVM = v
         }
 
         is VehicleListUIState.Error -> {
-            ErrorDialog(state.message)
+            //ErrorDialog(state.message, viewModel)
             Log.d(VPL_TAG, "MapUiState on error.")
         }
 
@@ -146,7 +144,7 @@ fun PoiItem(navController: NavController, poi: Poi) {
         .fillMaxWidth()
         .padding(start = 16.dp, top = 16.dp)
         .clickable {
-            navController.currentBackStackEntry?.savedStateHandle?.set(POI, poi)
+            navController.currentBackStackEntry?.savedStateHandle?.set(TAXI_INFO, poi)
             navController.navigate(Screen.VehicleDetail.route)
         }) {
         if (poi.fleetType == "TAXI") {

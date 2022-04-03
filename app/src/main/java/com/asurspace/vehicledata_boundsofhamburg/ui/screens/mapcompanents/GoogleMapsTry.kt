@@ -26,15 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LAT
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P1LON
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LAT
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.service.LocalizationDataService.Companion.P2LON
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
-import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.POI
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.TaxiInfo
 import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.Screen
+import com.asurspace.vehicledata_boundsofhamburg.ui.navigation.TAXI_INFO
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.models.MapUIModel
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.DkBlue
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
@@ -97,6 +98,8 @@ fun GMapTry(
         position = defaultCameraPosition1
     }
 
+    val searchEnabled = remember { mutableStateOf(true) }
+
     var uiSettings by remember {
         mutableStateOf(
             MapUiSettings(
@@ -144,31 +147,44 @@ fun GMapTry(
             }
         ) {
 
-            val markerClick: (Marker) -> Boolean = {
-                Log.d(TPM_TAG, "${it.title} was clicked")
+            val markerClick: (Marker) -> Boolean = { marker ->
+                Log.d(TPM_TAG, "${marker.title} was clicked")
                 cameraPositionState.projection?.let { projection ->
                     Log.d(TPM_TAG, "The current projection is: ${projection.visibleRegion}")
                 }
+
+                lifecycleScope.launch {
+
+                }
+
                 false
             }
 
-            listOfVehicles.value.forEach { poi ->
+            listOfVehicles.value.forEach { taxiInfo ->
                 MarkerInfoWindow(
-                    state = MarkerState(LatLng(poi.coordinate.latitude, poi.coordinate.longitude)),
-                    title = poi.fleetType,
+                    state = MarkerState(
+                        LatLng(
+                            taxiInfo.address.latitude,
+                            taxiInfo.address.longitude
+                        )
+                    ),
+                    title = taxiInfo.poi.fleetType,
                     icon = bitmapDescriptorFromVector(
                         LocalContext.current,
-                        poi.fleetType, poi.id
+                        taxiInfo.poi.fleetType, taxiInfo.poi.id
                     ),
                     onClick = markerClick,
                     onInfoWindowClick = {
                         lifecycleScope.launch(Dispatchers.Main) {
-                            navController.currentBackStackEntry?.savedStateHandle?.set(POI, poi)
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                TAXI_INFO,
+                                taxiInfo
+                            )
                             navController.navigate(Screen.VehicleDetail.route)
                         }
                     },
                 ) {
-                    if (poi.fleetType == "TAXI") {
+                    if (taxiInfo.poi.fleetType == "TAXI") {
                         Surface(
                             color = Color.Yellow,
                             shape = CircleShape,
@@ -177,14 +193,14 @@ fun GMapTry(
                         ) {
                             Row {
                                 Text(
-                                    text = "${it.title} №${poi.id}",
+                                    text = "${it.title} №${taxiInfo.poi.id}",
                                     style = MaterialTheme.typography.body1,
                                     modifier = Modifier
                                         .padding(10.dp)
                                 )
                             }
                         }
-                    } else if (poi.fleetType == "POOLING") {
+                    } else if (taxiInfo.poi.fleetType == "POOLING") {
                         Surface(
                             shape = CircleShape,
                             elevation = 1.dp,
@@ -193,7 +209,7 @@ fun GMapTry(
                             contentColor = Color.White
                         ) {
                             Text(
-                                text = it.title ?: poi.fleetType,
+                                text = it.title ?: taxiInfo.poi.fleetType,
                                 style = MaterialTheme.typography.body1,
                                 modifier = Modifier
                                     .padding(8.dp)
@@ -252,11 +268,14 @@ fun GMapTry(
                     onClick = {
                         val projection = cameraPositionState.projection?.visibleRegion
                         if (projection != null) {
-                            lifecycleScope.launch {
-                                listOfVehicles.value = viewModel.fetchPoiByCoordinates(
-                                    projection.farLeft,
-                                    projection.nearRight
+                            viewModel.viewModelScope.launch {
+                                viewModel.setCameraPosition(
+                                    listOf(
+                                        projection.farLeft,
+                                        projection.nearRight
+                                    )
                                 )
+                                listOfVehicles.value = viewModel.fetchPoiByCoordinates()
                             }
                         }
                     },
@@ -270,8 +289,8 @@ fun GMapTry(
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(start = 8.dp, end = 3.dp)
                 ) {
-                    items(items = listOfVehicles.value) { poi ->
-                        MapPoiItem(poi, cameraPositionState)
+                    items(items = listOfVehicles.value) { taxiInfo ->
+                        MapPoiItem(taxiInfo, cameraPositionState)
                     }
                 }
             }
@@ -327,8 +346,10 @@ fun GMapTry(
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapPoiItem(poi: Poi, cameraPositionState: CameraPositionState) {
+fun MapPoiItem(taxiInfo: TaxiInfo, cameraPositionState: CameraPositionState) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+    val poi = taxiInfo.poi
+    val address = taxiInfo.address
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = Color.White,
@@ -338,7 +359,7 @@ fun MapPoiItem(poi: Poi, cameraPositionState: CameraPositionState) {
                 cameraPositionState.animate(
                     CameraUpdateFactory.newCameraPosition(
                         CameraPosition.fromLatLngZoom(
-                            poi.coordinate,
+                            LatLng(address.latitude, address.longitude),
                             15f
                         )
                     )
@@ -392,6 +413,11 @@ fun MapPoiItem(poi: Poi, cameraPositionState: CameraPositionState) {
                     modifier = Modifier.padding(start = 4.dp)
                 )
             }
+            Text(
+                text = "${address.thoroughfare ?: ""} ${address.featureName ?: ""}\n${address.postalCode ?: ""} ${address.adminArea ?: ""}\n${address.countryName ?: ""}",
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier.padding(start = 4.dp)
+            )
         }
     }
 }

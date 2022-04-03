@@ -2,12 +2,11 @@ package com.asurspace.vehicledata_boundsofhamburg.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
+import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.TaxiInfo
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.MapVehicleView
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehicleDetails
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehiclePoiList
@@ -15,7 +14,7 @@ import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHa
 
 //entities
 const val POI_LIST = "poiList"
-const val POI = "poi"
+const val TAXI_INFO = "taxi_info"
 
 @Composable
 fun VehicleDataBoundsOfHamburgNavController() {
@@ -33,8 +32,8 @@ fun VehicleDataBoundsOfHamburgNavController() {
                 VehiclePoiList(navController, hiltViewModel())
             }
             composable(route = Screen.VehicleDetail.route) {
-                val poi = navController.previousBackStackEntry?.savedStateHandle?.get<Poi>(POI)
-                VehicleDetails(navController, poi)
+                val taxiInfo = navController.previousBackStackEntry?.savedStateHandle?.get<TaxiInfo>(TAXI_INFO)
+                VehicleDetails(navController, taxiInfo)
             }
         }
     }

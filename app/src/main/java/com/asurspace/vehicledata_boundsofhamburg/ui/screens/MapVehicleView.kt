@@ -17,7 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asurspace.vehicledata_boundsofhamburg.R
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.mapcompanents.GMapTry
-import com.asurspace.vehicledata_boundsofhamburg.ui.screens.mapcompanents.TaxiPoiMap
 import com.asurspace.vehicledata_boundsofhamburg.ui.state.MapUIState
 import com.asurspace.vehicledata_boundsofhamburg.utils.ErrorDialog
 import com.asurspace.vehicledata_boundsofhamburg.viewmodels.MapVehicleViewVM
@@ -57,7 +56,7 @@ fun MapVehicleView(
         }
 
         is MapUIState.Error -> {
-            ErrorDialog(state.message)
+            ErrorDialog(state.message, viewModel)
             Log.d(MAP_TAG, "MapUiState on error.")
         }
 
