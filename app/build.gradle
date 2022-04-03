@@ -68,19 +68,17 @@ android {
 
 dependencies {
 
-    def accompanist_version = "0.24.5-alpha" // 0.24.5-alpha
+    def accompanist_version = "0.24.5-alpha"
     def lifecycleVersion = "2.4.1"
     def retrofitVersion = "2.9.0"
     def okhttp3Version = "5.0.0-alpha.6"
     def glideVersion = "4.13.1"
+    def lottieVersion = "5.0.3"
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation "com.google.android.gms:play-services-location:19.0.1"
     implementation "com.google.android.gms:play-services-maps:18.0.2"
     implementation "com.google.maps.android:maps-compose:2.0.0"
-    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
-    implementation "com.google.android.libraries.maps:maps:3.1.0-beta"
-    implementation "com.google.maps.android:maps-v3-ktx:3.3.0"
+    implementation 'com.google.android.libraries.places:places:2.6.0'
     // compose
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -98,7 +96,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
-
     //coroutines flow
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
     // Retrofit
@@ -116,6 +113,9 @@ dependencies {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }
+    //lottie
+    implementation "com.airbnb.android:lottie-compose:$lottieVersion"
+
     // hilt di
     implementation "com.google.dagger:hilt-android:2.41"
     implementation "androidx.hilt:hilt-navigation-fragment:1.0.0"

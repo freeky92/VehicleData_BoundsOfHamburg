@@ -5,9 +5,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.Poi
 import com.asurspace.vehicledata_boundsofhamburg.datasource.network.localization_information_service.vehicle_entities.TaxiInfo
-import com.asurspace.vehicledata_boundsofhamburg.ui.screens.MapVehicleView
+import com.asurspace.vehicledata_boundsofhamburg.ui.screens.MapVehiclesScreen
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehicleDetails
 import com.asurspace.vehicledata_boundsofhamburg.ui.screens.VehiclePoiList
 import com.asurspace.vehicledata_boundsofhamburg.ui.theme.VehicleData_BoundsOfHamburgTheme
@@ -26,14 +25,17 @@ fun VehicleDataBoundsOfHamburgNavController() {
             startDestination = Screen.MapVehicleView.route
         ) {
             composable(route = Screen.MapVehicleView.route) {
-                MapVehicleView(navController, hiltViewModel())
+                MapVehiclesScreen(navController, hiltViewModel())
             }
             composable(route = Screen.VehiclePoiList.route) {
                 VehiclePoiList(navController, hiltViewModel())
             }
             composable(route = Screen.VehicleDetail.route) {
-                val taxiInfo = navController.previousBackStackEntry?.savedStateHandle?.get<TaxiInfo>(TAXI_INFO)
-                VehicleDetails(navController, taxiInfo)
+                val taxiInfo =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<TaxiInfo>(TAXI_INFO)
+                taxiInfo?.let {
+                    VehicleDetails(navController, it)
+                }
             }
         }
     }

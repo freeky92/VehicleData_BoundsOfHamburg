@@ -1,5 +1,6 @@
 package com.asurspace.vehicledata_boundsofhamburg.utils
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
@@ -20,17 +21,17 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ErrorDialog(message: String, viewModel: MapVehicleViewVM) {
+fun ErrorDialog(@DrawableRes resId: Int, message: String, viewModel: MapVehicleViewVM) {
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                //openDialog.value
+                openDialog.value = false
             },
             title = {
                 Row {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_out_connection_24),
+                        painter = painterResource(id = resId),
                         contentDescription = null
                     )
                     Text(
@@ -46,7 +47,7 @@ fun ErrorDialog(message: String, viewModel: MapVehicleViewVM) {
             confirmButton = {
                 Button(modifier = Modifier.padding(8.dp), onClick = {
                     viewModel.viewModelScope.launch {
-                        viewModel.fetchPoiByCoordinates()
+                        viewModel.fetchByCoordinate()
                     }
                     openDialog.value = false
                 }, content = {

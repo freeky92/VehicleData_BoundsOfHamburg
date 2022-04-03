@@ -8,5 +8,5 @@ import com.google.android.gms.maps.model.LatLng
 data class MapUIModel(
     var city: String = "",
     var requestCoordinates: List<LatLng> = mutableListOf(),
-    var poiList: List<TaxiInfo> = listOf()
+    var taxiList: List<TaxiInfo> = listOf()
 )

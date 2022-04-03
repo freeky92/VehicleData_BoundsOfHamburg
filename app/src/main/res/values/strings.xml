@@ -4,5 +4,6 @@
     <string name="error">Error occurred.</string>
     <string name="something_went_wrong">Something went wrong.</string>
     <string name="query_limit_reached">You reached query limit for this free api. Please try again later.</string>
+    <string name="no_vehicles_there">There are no vehicles</string>
 
 </resources>
