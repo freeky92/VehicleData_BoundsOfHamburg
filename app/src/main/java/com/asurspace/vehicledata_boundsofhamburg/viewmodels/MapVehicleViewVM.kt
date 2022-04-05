@@ -83,6 +83,7 @@ class MapVehicleViewVM @Inject constructor(
                 thereAreNoVehiclesQuery()
             } catch (ex: IOException) {
                 Log.d(TAG, "IOException: ${ex.message.toString()} ${ex.localizedMessage}")
+                onError()
             } catch (ex: Exception) {
                 Log.d(TAG, "Exception: ${ex.message.toString()} ${ex.localizedMessage}")
                 onError()

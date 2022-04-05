@@ -6,9 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.*
 import com.asurspace.vehicledata_boundsofhamburg.R
 
 @Composable
@@ -21,7 +19,7 @@ fun ShowProgress(isMapLoaded: Boolean, modifier: Modifier = Modifier) {
             exit = fadeOut()
         ) {
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.maps_car))
-            LottieAnimation(composition)
+            LottieAnimation(composition, iterations = LottieConstants.IterateForever)
         }
     }
 }

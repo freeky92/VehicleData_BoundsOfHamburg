@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapPoiItem(taxiInfo: TaxiInfo, cameraPositionState: CameraPositionState) {
+fun OnMapPoiItem(taxiInfo: TaxiInfo, cameraPositionState: CameraPositionState) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
     val poi = taxiInfo.poi
     val address = taxiInfo.address

@@ -78,7 +78,7 @@ fun FloatingTaxiList(
                 contentPadding = PaddingValues(start = 8.dp, end = 3.dp)
             ) {
                 items(items = listOfVehicles.value) { taxiInfo ->
-                    MapPoiItem(taxiInfo, cameraPositionState)
+                    OnMapPoiItem(taxiInfo, cameraPositionState)
                 }
             }
         }
