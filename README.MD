@@ -1,7 +1,8 @@
 # Vehicle Data Bounds of Hamburg
 ### Android fake poi api application. <br/> It is developed as Test project.
 
-Data source https://fake-poi-api.mytaxi.com/?p1Lat={Latitude1}&p1Lon={Longitude1}&p2Lat={Latitude2}&p2Lon={Longitude2}
+Data source api:
+https://fake-poi-api.mytaxi.com/?p1Lat={Latitude1}&p1Lon={Longitude1}&p2Lat={Latitude2}&p2Lon={Longitude2}
 
 ### Technology stack:
 
@@ -17,6 +18,8 @@ __7.__ Lottie animation <br/>
 
 
 ### Presentation Screens :
+
+![photo_2022-04-05_10-31-54](https://user-images.githubusercontent.com/71845637/161702211-5e4a2587-6cd2-4490-99aa-039973733efd.jpg){max-width:50%}
 
 ![photo_2022-04-05_10-31-54](https://user-images.githubusercontent.com/71845637/161702211-5e4a2587-6cd2-4490-99aa-039973733efd.jpg)
 ![photo_2022-04-05_10-31-07](https://user-images.githubusercontent.com/71845637/161702266-321b06e7-f434-4aeb-a2f7-33381c9b1093.jpg)
