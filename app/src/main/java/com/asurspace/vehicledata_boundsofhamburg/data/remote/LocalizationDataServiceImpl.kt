@@ -1,7 +1,6 @@
 package com.asurspace.vehicledata_boundsofhamburg.data.remote
 
 import com.asurspace.vehicledata_boundsofhamburg.data.remote.LocalizationDataApi.Companion.BASE_URL
-import com.asurspace.vehicledata_boundsofhamburg.domain.LocalizationDataService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

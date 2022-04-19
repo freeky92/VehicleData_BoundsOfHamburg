@@ -3,7 +3,7 @@ package com.asurspace.vehicledata_boundsofhamburg.di
 import com.asurspace.vehicledata_boundsofhamburg.data.remote.LocalizationDataApi
 import com.asurspace.vehicledata_boundsofhamburg.data.remote.LocalizationDataServiceImpl
 import com.asurspace.vehicledata_boundsofhamburg.data.repository.remote.LocalizationDataRepositoryImpl
-import com.asurspace.vehicledata_boundsofhamburg.domain.LocalizationDataService
+import com.asurspace.vehicledata_boundsofhamburg.data.remote.LocalizationDataService
 import com.asurspace.vehicledata_boundsofhamburg.domain.repository.LocalizationDataRepository
 import dagger.Module
 import dagger.Provides
